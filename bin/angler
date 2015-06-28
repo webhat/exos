@@ -1,0 +1,40 @@
+#!/usr/bin/env pike -M lib -M tests -M config -M app
+
+#define E(X) werror(sprintf("%t: %O\n", X, X));
+
+mapping(string:function) tests = ([]);
+
+int passed = 0;
+int failed = 0;
+int pending = 0;
+
+int main(int argc, array argv) {
+  routes.routes();
+  foreach(indices(AllTests), string file) {
+    foreach(indices(AllTests[file]), string func_name) {
+      mixed fn = AllTests[file][func_name];
+      if(functionp(fn) && search(func_name, "test") == 0) {
+        tests += ([ func_name:fn ]);
+      }
+    }
+  }
+  foreach(indices(tests), string test) {
+    mixed err = catch {
+      tests[test]();
+    };
+    if(err) {
+      if(!objectp(err) || "Tests.TestsFail" == sprintf("%O", err)[0..14]) {
+        failed++;
+        write(sprintf("Test %s failed\n", test));
+        write(Tests.pretty_backtrace(err));
+      } else {
+        pending++;
+        E(err);
+      }
+    } else passed++;
+  }
+  write(sprintf("Passed: %d, Failed: %d, Pending: %d\n", passed, failed, pending));
+
+  return failed;
+}
+

@@ -1,0 +1,36 @@
+#!/usr/bin/env pike -M lib/ -M config/ -M tests -M app
+
+mapping(string:string) exos_arguments(array(string) args) {
+  mapping arguments = ([]);
+  if( sizeof(args) == 1) {
+    werror(sprintf("Error: no arguments given\n"));
+    exit(-256);
+  }
+  arguments["service"] = args[1];
+  if( sizeof(args) > 2 )
+    arguments["name"] = args[2];
+  return arguments;
+}
+
+int main(int argc, array(string) argv) {
+  add_module_path("lib/");
+  routes.routes();
+
+  //write(sprintf("%d\n", argc));
+  //write(sprintf("%O\n", argv));
+
+  //write(sprintf("%O\n", indices(master())));
+  //write(sprintf("%O\n", indices(master()->programs)));
+  //write(sprintf("%O\n", indices(master()->objects)));
+  //write(sprintf("%O\n", this_program()));
+  //write(sprintf("%O\n", this_object()));
+
+  mapping(string:string) args = exos_arguments(argv);
+
+  Exos.start(args);
+
+  if(args["service"] == "s" || args["service"] == "server")
+    return -1;
+  else
+    return 0;
+}
