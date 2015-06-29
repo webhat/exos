@@ -33,7 +33,7 @@ int main(int argc, array argv) {
       }
     } else passed++;
   }
-  write(sprintf("Passed: %d, Failed: %d, Pending: %d\n", passed, failed, pending));
+  write(sprintf("Passed: %d, Failed: %d, Pending: %d\n", passed + Tests.test_results()->passed, failed + Tests.test_results()->failed, pending + Tests.test_results()->pending));
 
   return failed;
 }

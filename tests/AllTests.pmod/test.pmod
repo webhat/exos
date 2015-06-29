@@ -79,3 +79,20 @@ void testRouteRouteShow() {
   program root = Exos.Route.is_route(controllername)();
   expect(root->show)->to()->eq("");
 }
+
+void testDescribe() {
+  describe(Controllers.TestController, lambda(mixed described_class) {
+    context("tests", lambda() {
+      it("exists", lambda() {
+        expect(described_class)->to()->be(Controllers.TestController);
+        });
+      it("doesn't exists", lambda() {
+        expect(described_class)->to_not()->be(0);
+      });
+      it("is pending", lambda() {
+        pending();
+        expect(described_class)->to_not()->be(0);
+      });
+    });
+  });
+}

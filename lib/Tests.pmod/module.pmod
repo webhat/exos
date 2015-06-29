@@ -9,6 +9,46 @@ public object expect(mixed actual) {
   return expect;
 }
 
+class TestResults {
+  public int tests = 0;
+  public int passed = 0;
+  public int pending = 0;
+  public int failed = 0;
+}
+
+object test_results() {
+  if(master()->objects["test_results"] == 0)
+    master()->objects["test_results"] = TestResults();
+  return master()->objects["test_results"];
+}
+
+
+public mixed describe(mixed clazz, function callback) {
+  mixed ret;
+  mixed err = catch { ret = callback(clazz); };
+  return ret;
+}
+
+public mixed context(string description, function callback) {
+  mixed ret;
+  mixed err = catch { ret = callback(); };
+  return ret;
+}
+
+public mixed it(string description, function callback) {
+  mixed ret;
+  mixed err = catch { ret = callback(); };
+  if(!err) test_results()->passed++;
+  else {
+      if("Tests.TestsFail" == sprintf("%O", err)[0..14]) {
+        test_results()->failed++;
+      } else {
+        test_results()->pending++;
+      }
+  }
+  return ret;
+}
+
 void pending() {
   throw(Pending(backtrace()));
 }
